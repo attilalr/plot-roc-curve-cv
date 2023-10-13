@@ -14,10 +14,13 @@ def plot_roc_curve(X, y,
                    clf_label=None,
                    target_column=1, # for binary is the usual
                    class_name=None,
+                   color_mean_roc_curve='r',
                    cv=5, 
-                   show_fold_curves=True, show_fold_scores=False,
+                   show_fold_curves=True, show_fold_scores=False, plot_chance_curve=True,
                    figsize=None,
-                   dict_pyplot_style=None):
+                   dict_pyplot_style=None,
+                   fig=None,
+                   return_fig=False):
 
 
     assert is_classifier(clf), 'clf must be a classifier.'
@@ -44,8 +47,8 @@ def plot_roc_curve(X, y,
     
     with mpl.rc_context(dict_pyplot_style):
 
-
-        plt.figure(figsize=figsize)
+        if fig is not None:
+            fig = plt.figure(figsize=figsize)
 
         for ifold, (train_index, test_index) in enumerate(kfold.split(X, y)):
 
@@ -76,9 +79,9 @@ def plot_roc_curve(X, y,
 
             if show_fold_curves:
                 if show_fold_scores:
-                    plt.plot(fpr, tpr, '-', c='gray', label=f'AUC fold {ifold+1}: {auc_:.2f}')
+                    plt.plot(fpr, tpr, '-', c='gray', label=f'AUC fold {ifold+1}: {auc_:.2f}', figure=fig)
                 else:
-                    plt.plot(fpr, tpr, '-', c='gray')
+                    plt.plot(fpr, tpr, '-', c='gray', figure=fig)
 
             aucs.append(auc_)
 
@@ -89,13 +92,20 @@ def plot_roc_curve(X, y,
         plt.plot(
             mean_fpr,
             mean_tpr,
-            color='r',
+            color=color_mean_roc_curve,
             label=r"Mean ROC %s for class %s, AUC = %0.2f $\pm$ %0.2f" % (clf_label, class_name, mean_auc, std_auc),
             lw=4,
             alpha=0.8,
+            figure=fig
         )
-
-        plt.plot([0, 1], [0, 1], '--', label='chance', lw=4)
+        if plot_chance_curve:
+            plt.plot([0, 1], [0, 1], '--', label='chance', lw=4, figure=fig)
         plt.legend()
         plt.xlabel('False positive rate')
         plt.ylabel('True positive rate')
+
+        if return_fig:
+            return fig
+        else:
+            plt.show()
+
