@@ -9,6 +9,37 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import check_cv
 
+import pandas as pd
+
+def filter_idxs(v_array, idxs, return_copy=False, convert_to_ndarray=True):
+
+    if convert_to_ndarray:
+        if isinstance(v_array, pd.DataFrame):
+            if return_copy:
+                return v_array.iloc[idxs].copy().values
+            else:
+                return v_array.iloc[idxs].values
+
+        elif isinstance(v_array, np.ndarray):
+            if return_copy:
+                return v_array[idxs].copy().values
+            else:
+                return v_array[idxs].values
+
+    else:
+        if isinstance(v_array, pd.DataFrame):
+            if return_copy:
+                return v_array.iloc[idxs].copy()
+            else:
+                return v_array.iloc[idxs]
+
+        elif isinstance(v_array, np.ndarray):
+            if return_copy:
+                return v_array[idxs].copy()
+            else:
+                return v_array[idxs]
+
+
 def plot_roc_curve(X, y,
                    clf,
                    clf_label=None,
@@ -52,17 +83,28 @@ def plot_roc_curve(X, y,
 
         for ifold, (train_index, test_index) in enumerate(kfold.split(X, y)):
 
-            X_train = X[train_index].copy() # fazer uma copia aqui porque a ideia é poder alterar X_train nessa iteração
-            y_train = y[train_index]
+            X_train = filter_idxs(X, train_index, return_copy=True) # fazer uma copia aqui porque a ideia é poder alterar X_train nessa iteração
+            y_train = filter_idxs(y, train_index)
 
-            X_test = X[test_index]
-            y_test = y[test_index]
+            X_test = filter_idxs(X, test_index)
+            y_test = filter_idxs(y, test_index)
+
+            if isinstance(y_train, np.ndarray):
+                y_train = y_train.ravel()
+                y_test = y_test.ravel() 
+
+            #X_train = X[train_index].copy() # fazer uma copia aqui porque a ideia é poder alterar X_train nessa iteração
+            #y_train = y[train_index]
+
+            #X_test = X[test_index]
+            #y_test = y[test_index]
 
             # I can process X_train here (standardization for example...)
             #
             #
 
             # Now I'll train
+
             clf.fit(X_train, y_train)
 
             y_true = y_test
@@ -108,4 +150,5 @@ def plot_roc_curve(X, y,
             return fig
         else:
             plt.show()
+
 
