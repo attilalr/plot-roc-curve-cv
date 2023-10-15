@@ -22,9 +22,9 @@ def filter_idxs(v_array, idxs, return_copy=False, convert_to_ndarray=True):
 
         elif isinstance(v_array, np.ndarray):
             if return_copy:
-                return v_array[idxs].copy().values
+                return v_array[idxs].copy()
             else:
-                return v_array[idxs].values
+                return v_array[idxs]
 
     else:
         if isinstance(v_array, pd.DataFrame):
