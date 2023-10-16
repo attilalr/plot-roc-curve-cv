@@ -47,6 +47,7 @@ def plot_roc_curve(X, y,
                    class_name=None,
                    color_mean_roc_curve='r',
                    cv=5, 
+                   n_points_roc_curve=200,
                    show_fold_curves=True, show_fold_scores=False, plot_chance_curve=True,
                    figsize=None,
                    dict_pyplot_style=None,
@@ -73,7 +74,7 @@ def plot_roc_curve(X, y,
     # https://scikit-learn.org/stable/auto_examples/model_selection/plot_roc_crossval.html#:~:text=Example%20of%20Receiver%20Operating%20Characteristic,rate%20on%20the%20X%20axis.
     tprs = []
     aucs = []
-    mean_fpr = np.linspace(0, 1, 100)
+    mean_fpr = np.linspace(0, 1, n_points_roc_curve)
 
     
     with mpl.rc_context(dict_pyplot_style):
