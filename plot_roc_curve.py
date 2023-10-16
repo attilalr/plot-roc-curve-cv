@@ -60,11 +60,8 @@ def plot_roc_curve(X, y,
     if clf_label is None:
         clf_label = ''
 
-    if class_name is None:
-        class_name = str(target_column)
-
     if not figsize:
-        figsize = (9, 6)
+        figsize = (12, 7)
 
     kfold = check_cv(cv=cv, y=y, classifier=True)
 
@@ -93,12 +90,6 @@ def plot_roc_curve(X, y,
             if isinstance(y_train, np.ndarray):
                 y_train = y_train.ravel()
                 y_test = y_test.ravel() 
-
-            #X_train = X[train_index].copy() # fazer uma copia aqui porque a ideia é poder alterar X_train nessa iteração
-            #y_train = y[train_index]
-
-            #X_test = X[test_index]
-            #y_test = y[test_index]
 
             # I can process X_train here (standardization for example...)
             #
@@ -132,11 +123,18 @@ def plot_roc_curve(X, y,
         mean_tpr[-1] = 1.0
         mean_auc = auc(mean_fpr, mean_tpr)
         std_auc = np.std(aucs)
+
+        if class_name:
+            model_label = r"Mean ROC %s for class %s, AUC = %0.2f $\pm$ %0.2f" % (clf_label, class_name, mean_auc, std_auc)
+        else:
+            model_label = r"Mean ROC %s, AUC = %0.2f $\pm$ %0.2f" % (clf_label, mean_auc, std_auc)
+
+
         plt.plot(
             mean_fpr,
             mean_tpr,
             color=color_mean_roc_curve,
-            label=r"Mean ROC %s for class %s, AUC = %0.2f $\pm$ %0.2f" % (clf_label, class_name, mean_auc, std_auc),
+            label=model_label,
             lw=4,
             alpha=0.8,
             figure=fig
@@ -151,5 +149,6 @@ def plot_roc_curve(X, y,
             return fig
         else:
             plt.show()
+
 
 
