@@ -77,7 +77,7 @@ def plot_roc_curve(X, y,
     
     with mpl.rc_context(dict_pyplot_style):
 
-        if fig is not None:
+        if fig is None:
             fig = plt.figure(figsize=figsize, dpi=fig_dpi)
 
         for ifold, (train_index, test_index) in enumerate(kfold.split(X, y)):
