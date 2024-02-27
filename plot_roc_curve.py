@@ -49,7 +49,8 @@ def plot_roc_curve(X, y,
                    cv=5, 
                    n_points_roc_curve=200,
                    show_fold_curves=True, show_fold_scores=False, plot_chance_curve=True,
-                   figsize=None,
+                   figsize=None, fig_dpi=None,
+                   override_label=None,
                    dict_pyplot_style=None,
                    fig=None,
                    return_fig=False):
@@ -77,7 +78,7 @@ def plot_roc_curve(X, y,
     with mpl.rc_context(dict_pyplot_style):
 
         if fig is not None:
-            fig = plt.figure(figsize=figsize)
+            fig = plt.figure(figsize=figsize, dpi=fig_dpi)
 
         for ifold, (train_index, test_index) in enumerate(kfold.split(X, y)):
 
@@ -124,10 +125,13 @@ def plot_roc_curve(X, y,
         mean_auc = auc(mean_fpr, mean_tpr)
         std_auc = np.std(aucs)
 
-        if class_name:
-            model_label = r"Mean ROC %s for class %s, AUC = %0.2f $\pm$ %0.2f" % (clf_label, class_name, mean_auc, std_auc)
+        if oveeride_label:
+            model_label = override_label
         else:
-            model_label = r"Mean ROC %s, AUC = %0.2f $\pm$ %0.2f" % (clf_label, mean_auc, std_auc)
+            if class_name:
+                model_label = r"Mean ROC %s for class %s, AUC = %0.2f $\pm$ %0.2f" % (clf_label, class_name, mean_auc, std_auc)
+            else:
+                model_label = r"Mean ROC %s, AUC = %0.2f $\pm$ %0.2f" % (clf_label, mean_auc, std_auc)
 
 
         plt.plot(
@@ -149,6 +153,5 @@ def plot_roc_curve(X, y,
             return fig
         else:
             plt.show()
-
 
 
