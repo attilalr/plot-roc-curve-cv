@@ -125,7 +125,7 @@ def plot_roc_curve(X, y,
         mean_auc = auc(mean_fpr, mean_tpr)
         std_auc = np.std(aucs)
 
-        if oveeride_label:
+        if override_label:
             model_label = override_label
         else:
             if class_name:
