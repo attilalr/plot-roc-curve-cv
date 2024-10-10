@@ -56,6 +56,11 @@ def plot_roc_curve(X, y,
                    return_fig=False):
 
 
+    try:
+        y = np.array(y)
+    except:
+        assert 'cant cast y to np array.'
+                       
     assert is_classifier(clf), 'clf must be a classifier.'
 
     if clf_label is None:
